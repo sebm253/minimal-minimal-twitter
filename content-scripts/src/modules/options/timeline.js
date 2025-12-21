@@ -333,19 +333,31 @@ export const changeTrendsHomeTimeline = (trendsHomeTimeline, writerMode) => {
 export const changeFollowingTimeline = (followingTimeline) => {
   if (followingTimeline !== "on") return;
 
-  const tablist = document.querySelector("div[data-testid='ScrollSnap-List'][role='tablist']");
-  const selectedTab = document.querySelector("div[data-testid='ScrollSnap-List'][role='tablist'] a[href='/home'][aria-selected='true']");
+  const tablist = document.querySelector(
+    "div[data-testid='ScrollSnap-List'][role='tablist']"
+  );
+  if (!tablist) return;
 
-  // Check if there's a selected tab
-  if (!tablist || !selectedTab) return;
+  const tabs = tablist.querySelectorAll("[role='tab']");
+  if (!tabs.length) return;
 
-  const selectedTabText = selectedTab.querySelector("div[dir='ltr'] > span").textContent.toLowerCase();
+  const activeTab = tablist.querySelector("[role='tab'][aria-selected='true']");
+  const activeText = activeTab
+    ?.querySelector("div[dir='ltr'] span")
+    ?.textContent
+    ?.toLowerCase();
 
-  if (selectedTabText === "following") return;
+  // Already on Following
+  if (activeText === "following") return;
 
-  const secondTab = tablist.querySelector("div[role='presentation']:nth-child(2) a");
+  const followingTab = Array.from(tabs).find(tab =>
+    tab
+      .querySelector("div[dir='ltr'] span")
+      ?.textContent
+      ?.toLowerCase() === "following"
+  );
 
-  secondTab.click(); // Following tab is second tab
+  followingTab?.click();
 };
 
 // Function to change Latest Tweets
