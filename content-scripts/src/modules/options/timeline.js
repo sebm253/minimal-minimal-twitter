@@ -333,31 +333,27 @@ export const changeTrendsHomeTimeline = (trendsHomeTimeline, writerMode) => {
 export const changeFollowingTimeline = (followingTimeline) => {
   if (followingTimeline !== "on") return;
 
-  const tablist = document.querySelector(
-    "div[data-testid='ScrollSnap-List'][role='tablist']"
-  );
-  if (!tablist) return;
+  const tablist = document.querySelector(selectors.timelineTablist);
+  const selectedTab = document.querySelector(`${selectors.timelineTablist} ${selectors.timelineTabSelected}`);
 
-  const tabs = tablist.querySelectorAll("[role='tab']");
-  if (!tabs.length) return;
+  if (!tablist || !selectedTab) return;
 
-  const activeTab = tablist.querySelector("[role='tab'][aria-selected='true']");
-  const activeText = activeTab
-    ?.querySelector("div[dir='ltr'] span")
-    ?.textContent
-    ?.toLowerCase();
+  // Get localized "Following" text (it's the second tab)
+  const followingTabSpan = tablist.querySelector(`${selectors.timelineTabPresentation}:nth-of-type(2) span`);
+  if (!followingTabSpan) return;
 
-  // Already on Following
-  if (activeText === "following") return;
+  const followingTabText = followingTabSpan.textContent.toLowerCase();
+  const selectedTabSpan = selectedTab.querySelector("div[dir='ltr'] > span");
+  if (!selectedTabSpan) return;
 
-  const followingTab = Array.from(tabs).find(tab =>
-    tab
-      .querySelector("div[dir='ltr'] span")
-      ?.textContent
-      ?.toLowerCase() === "following"
-  );
+  const selectedTabText = selectedTabSpan.textContent.toLowerCase();
 
-  followingTab?.click();
+  if (selectedTabText === followingTabText) return; // Already on the "Following" tab
+
+  const secondTab = tablist.querySelector(`${selectors.timelineTabPresentation}:nth-child(2) ${selectors.timelineTab}`);
+  if (!secondTab) return;
+
+  secondTab.click();
 };
 
 // Function to change Latest Tweets
